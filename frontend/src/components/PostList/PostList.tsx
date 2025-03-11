@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getAllPosts } from '../../services/api/posts';
+import { getPosts } from '../../services/api/posts';
 import { Post } from '../../types';
 import PostCard from '../PostCard/PostCard';
 
@@ -11,8 +11,8 @@ const styles = {
     padding: '2rem',
   },
   header: {
-    marginBottom: '3rem',
     textAlign: 'center' as const,
+    marginBottom: '3rem',
   },
   title: {
     fontSize: '2.5rem',
@@ -29,7 +29,7 @@ const styles = {
   },
   grid: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
     gap: '2rem',
     marginBottom: '3rem',
   },
@@ -41,24 +41,19 @@ const styles = {
     color: 'white',
     textDecoration: 'none',
     borderRadius: '8px',
-    fontWeight: 600,
+    fontWeight: 500,
     transition: 'all 0.2s ease',
-    boxShadow: '0 4px 6px rgba(49, 130, 206, 0.25)',
+    marginBottom: '2rem',
     '&:hover': {
       backgroundColor: '#2c5282',
       transform: 'translateY(-2px)',
-      boxShadow: '0 6px 8px rgba(49, 130, 206, 0.3)',
     },
-  },
-  buttonContainer: {
-    textAlign: 'center' as const,
-    marginTop: '2rem',
   },
   loader: {
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: '300px',
+    minHeight: '400px',
     fontSize: '1.25rem',
     color: '#4a5568',
   },
@@ -68,24 +63,45 @@ const styles = {
     backgroundColor: '#fff5f5',
     color: '#c53030',
     borderRadius: '8px',
-    margin: '2rem 0',
+    margin: '2rem auto',
+    maxWidth: '600px',
+  },
+  errorTitle: {
+    fontSize: '1.5rem',
+    fontWeight: 600,
+    marginBottom: '1rem',
+  },
+  retryButton: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    padding: '0.75rem 1.5rem',
+    backgroundColor: '#c53030',
+    color: 'white',
+    border: 'none',
+    borderRadius: '8px',
+    fontWeight: 500,
+    cursor: 'pointer',
+    marginTop: '1rem',
+    transition: 'all 0.2s ease',
+    '&:hover': {
+      backgroundColor: '#9b2c2c',
+    },
   },
   emptyState: {
     textAlign: 'center' as const,
     padding: '4rem 2rem',
-    backgroundColor: '#f7fafc',
-    borderRadius: '12px',
-    marginBottom: '2rem',
+    color: '#4a5568',
   },
   emptyStateTitle: {
     fontSize: '1.5rem',
     fontWeight: 600,
-    color: '#2d3748',
     marginBottom: '1rem',
+    color: '#2d3748',
   },
   emptyStateText: {
-    color: '#4a5568',
+    fontSize: '1.125rem',
     marginBottom: '2rem',
+    color: '#4a5568',
   },
 };
 
@@ -94,25 +110,26 @@ const PostList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchPosts = useCallback(async () => {
-    try {
-      const data = await getAllPosts();
-      setPosts(data);
-      setLoading(false);
-    } catch (err) {
-      setError('Failed to fetch posts. Please try again later.');
-      setLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const data = await getPosts();
+        setPosts(data);
+        setError(null);
+      } catch (err) {
+        setError('Failed to fetch posts. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchPosts();
-  }, [fetchPosts]);
+  }, []);
 
   if (loading) {
     return (
       <div style={styles.loader}>
-        <div>Loading amazing posts for you...</div>
+        <div>Loading amazing content...</div>
       </div>
     );
   }
@@ -120,17 +137,9 @@ const PostList: React.FC = () => {
   if (error) {
     return (
       <div style={styles.error}>
-        <h3>Oops! Something went wrong</h3>
+        <h3 style={styles.errorTitle}>Oops! Something went wrong</h3>
         <p>{error}</p>
-        <button 
-          onClick={fetchPosts}
-          style={{
-            ...styles.createButton,
-            marginTop: '1rem',
-            cursor: 'pointer',
-            border: 'none',
-          }}
-        >
+        <button onClick={() => window.location.reload()} style={styles.retryButton}>
           Try Again
         </button>
       </div>
@@ -140,36 +149,32 @@ const PostList: React.FC = () => {
   return (
     <div style={styles.container}>
       <header style={styles.header}>
-        <h1 style={styles.title}>Welcome to My Blog</h1>
+        <h1 style={styles.title}>Welcome to Our Blog</h1>
         <p style={styles.subtitle}>
-          This is my simple blog I created from scratch, feel free to add as many articles
-          as you like :D 
+          Discover amazing stories, insights, and ideas from our community
         </p>
       </header>
+
+      <Link to="/create" style={styles.createButton}>
+        Write a Post →
+      </Link>
 
       {posts.length === 0 ? (
         <div style={styles.emptyState}>
           <h2 style={styles.emptyStateTitle}>No Posts Yet</h2>
           <p style={styles.emptyStateText}>
-            Be the first to share your thoughts and ideas with our community!
+            Be the first one to share your thoughts with our community!
           </p>
           <Link to="/create" style={styles.createButton}>
             Create Your First Post
           </Link>
         </div>
       ) : (
-        <>
-          <div style={styles.grid}>
-            {posts.map((post) => (
-              <PostCard key={post.id} post={post} />
-            ))}
-          </div>
-          <div style={styles.buttonContainer}>
-            <Link to="/create" style={styles.createButton}>
-              Share Your Story →
-            </Link>
-          </div>
-        </>
+        <div style={styles.grid}>
+          {posts.map((post) => (
+            <PostCard key={post.id} post={post} />
+          ))}
+        </div>
       )}
     </div>
   );

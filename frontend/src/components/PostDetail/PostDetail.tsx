@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { getPostById } from '../../services/api/posts';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { getPostById, deletePost } from '../../services/api/posts';
 import { Post } from '../../types';
 
 const styles = {
@@ -84,10 +84,28 @@ const styles = {
     borderRadius: '8px',
     fontWeight: 500,
     transition: 'all 0.2s ease',
+    border: 'none',
+    cursor: 'pointer',
     '&:hover': {
       backgroundColor: '#2c5282',
       transform: 'translateY(-2px)',
     },
+  },
+  deleteButton: {
+    backgroundColor: '#e53e3e',
+    '&:hover': {
+      backgroundColor: '#c53030',
+    },
+  },
+  editButton: {
+    backgroundColor: '#38a169',
+    '&:hover': {
+      backgroundColor: '#2f855a',
+    },
+  },
+  buttonGroup: {
+    display: 'flex',
+    gap: '1rem',
   },
   loader: {
     display: 'flex',
@@ -127,14 +145,61 @@ const styles = {
       backgroundColor: '#9b2c2c',
     },
   },
+  confirmDialog: {
+    position: 'fixed' as const,
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    backgroundColor: 'white',
+    padding: '2rem',
+    borderRadius: '12px',
+    boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
+    maxWidth: '400px',
+    width: '90%',
+    textAlign: 'center' as const,
+  },
+  confirmOverlay: {
+    position: 'fixed' as const,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  confirmTitle: {
+    fontSize: '1.5rem',
+    fontWeight: 600,
+    marginBottom: '1rem',
+    color: '#2d3748',
+  },
+  confirmText: {
+    color: '#4a5568',
+    marginBottom: '2rem',
+  },
+  confirmButtons: {
+    display: 'flex',
+    gap: '1rem',
+    justifyContent: 'center',
+  },
+  confirmCancel: {
+    backgroundColor: '#718096',
+    '&:hover': {
+      backgroundColor: '#4a5568',
+    },
+  },
 };
 
 const PostDetail: React.FC = () => {
   const params = useParams();
+  const navigate = useNavigate();
   const id = params.id;
   const [post, setPost] = useState<Post | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState<boolean>(false);
 
   const fetchPost = useCallback(async () => {
     if (!id) return;
@@ -153,6 +218,17 @@ const PostDetail: React.FC = () => {
   useEffect(() => {
     fetchPost();
   }, [fetchPost]);
+
+  const handleDelete = useCallback(async () => {
+    if (!id) return;
+    
+    try {
+      await deletePost(parseInt(id));
+      navigate('/');
+    } catch (err) {
+      setError('Failed to delete post. Please try again later.');
+    }
+  }, [id, navigate]);
 
   if (loading) {
     return (
@@ -195,33 +271,71 @@ const PostDetail: React.FC = () => {
   });
 
   return (
-    <div style={styles.container}>
-      <header style={styles.header}>
-        <h1 style={styles.title}>{post.title}</h1>
-        <div style={styles.meta}>
-          <div style={styles.author}>
-            <div style={styles.authorAvatar}>{authorInitial}</div>
-            <div style={styles.authorInfo}>
-              <span style={styles.authorName}>{post.author}</span>
-              <span style={styles.date}>{formattedDate}</span>
+    <>
+      <div style={styles.container}>
+        <header style={styles.header}>
+          <h1 style={styles.title}>{post.title}</h1>
+          <div style={styles.meta}>
+            <div style={styles.author}>
+              <div style={styles.authorAvatar}>{authorInitial}</div>
+              <div style={styles.authorInfo}>
+                <span style={styles.authorName}>{post.author}</span>
+                <span style={styles.date}>{formattedDate}</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <div style={styles.content}>
+          {post.content}
+        </div>
+
+        <div style={styles.navigation}>
+          <Link to="/" style={styles.button}>
+            ← Back to Posts
+          </Link>
+          <div style={styles.buttonGroup}>
+            <Link 
+              to={`/edit/${post.id}`} 
+              style={{ ...styles.button, ...styles.editButton }}
+            >
+              Edit Post
+            </Link>
+            <button 
+              onClick={() => setShowDeleteConfirm(true)} 
+              style={{ ...styles.button, ...styles.deleteButton }}
+            >
+              Delete Post
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {showDeleteConfirm && (
+        <div style={styles.confirmOverlay}>
+          <div style={styles.confirmDialog}>
+            <h3 style={styles.confirmTitle}>Delete Post?</h3>
+            <p style={styles.confirmText}>
+              Are you sure you want to delete this post? This action cannot be undone.
+            </p>
+            <div style={styles.confirmButtons}>
+              <button 
+                onClick={() => setShowDeleteConfirm(false)}
+                style={{ ...styles.button, ...styles.confirmCancel }}
+              >
+                Cancel
+              </button>
+              <button 
+                onClick={handleDelete}
+                style={{ ...styles.button, ...styles.deleteButton }}
+              >
+                Delete
+              </button>
             </div>
           </div>
         </div>
-      </header>
-
-      <div style={styles.content}>
-        {post.content}
-      </div>
-
-      <div style={styles.navigation}>
-        <Link to="/" style={styles.button}>
-          ← Back to Posts
-        </Link>
-        <Link to="/create" style={styles.button}>
-          Write a Post →
-        </Link>
-      </div>
-    </div>
+      )}
+    </>
   );
 };
 
