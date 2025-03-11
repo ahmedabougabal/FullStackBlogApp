@@ -1,11 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import * as request from 'supertest';
-import { App } from 'supertest/types';
 import { AppModule } from './../src/app.module';
 
-describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+describe('PostsController (e2e)', () => {
+  let app: INestApplication;
 
   beforeEach(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
@@ -16,10 +15,38 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/ (GET)', () => {
+  it('/posts (GET)', () => {
     return request(app.getHttpServer())
-      .get('/')
+      .get('/posts')
       .expect(200)
-      .expect('Hello World!');
+      .expect([]);
+  });
+
+  it('/posts (POST)', () => {
+    return request(app.getHttpServer())
+      .post('/posts')
+      .send({ title: 'Test Post', author: 'Test Author', content: 'Test Content' })
+      .expect(201);
+  });
+
+  it('/posts/:id (GET)', async () => {
+    const post = await request(app.getHttpServer())
+      .post('/posts')
+      .send({ title: 'Test Post', author: 'Test Author', content: 'Test Content' });
+
+    return request(app.getHttpServer())
+      .get(`/posts/${post.body.id}`)
+      .expect(200)
+      .expect(post.body);
+  });
+
+  it('/posts/:id (DELETE)', async () => {
+    const post = await request(app.getHttpServer())
+      .post('/posts')
+      .send({ title: 'Test Post', author: 'Test Author', content: 'Test Content' });
+
+    return request(app.getHttpServer())
+      .delete(`/posts/${post.body.id}`)
+      .expect(200);
   });
 });
