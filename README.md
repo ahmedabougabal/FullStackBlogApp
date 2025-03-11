@@ -2,7 +2,8 @@
 
 A modern, responsive blog platform built with React, TypeScript, and NestJS. Features a beautiful UI, robust error handling, and full CRUD operations for blog posts.
 
-![Blog Platform Screenshot]
+![image](https://github.com/user-attachments/assets/38052fd1-f8c7-4030-8b7d-922477e5c44f)
+
 
 ## 🚀 Features
 
