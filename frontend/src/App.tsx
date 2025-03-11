@@ -16,6 +16,7 @@ const App: React.FC = () => {
             <Route path="/" element={<PostList />} />
             <Route path="/posts/:id" element={<PostDetail />} />
             <Route path="/create" element={<PostForm />} />
+            <Route path="/edit/:id" element={<PostForm />} />
           </Routes>
         </main>
       </div>
