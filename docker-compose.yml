@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: blog_db
+    environment:
+      POSTGRES_DB: blog_db
+      POSTGRES_USER: blog_user
+      POSTGRES_PASSWORD: your_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - blog_network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: blog_backend
+    environment:
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USER=blog_user
+      - DATABASE_PASSWORD=your_password
+      - DATABASE_NAME=blog_db
+      - NODE_ENV=development
+      - PORT=3000
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    networks:
+      - blog_network
+    volumes:
+      - ./backend:/usr/src/app
+      - /usr/src/app/node_modules
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: blog_frontend
+    ports:
+      - "3001:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:3000
+    depends_on:
+      - backend
+    networks:
+      - blog_network
+    volumes:
+      - ./frontend:/usr/src/app
+      - /usr/src/app/node_modules
+
+networks:
+  blog_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
