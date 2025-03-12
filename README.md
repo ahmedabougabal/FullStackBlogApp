@@ -59,7 +59,7 @@ The easiest way to get started is using Docker Compose:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/FullStackBlogApp.git
+git clone https://github.com/ahmedabougabal/FullStackBlogApp.git
 cd FullStackBlogApp
 
 # Start the application
