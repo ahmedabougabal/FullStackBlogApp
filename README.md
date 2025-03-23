@@ -6,11 +6,9 @@ A modern, responsive blog platform built with React, TypeScript, and NestJS. Fea
 
   <img src="https://github.com/Govindv7555/Govindv7555/blob/main/49e76e0596857673c5c80c85b84394c1.gif" width="1000px" height="100px">
 
-
 ![image](https://github.com/user-attachments/assets/74d42884-7708-489c-bcd8-e2c9e1fe1eb1)
 
   <img src="https://github.com/Govindv7555/Govindv7555/blob/main/49e76e0596857673c5c80c85b84394c1.gif" width="1000px" height="100px">
-
 
 ![image](https://github.com/user-attachments/assets/6ca9b84f-9aae-49f8-a836-fc7b48d8c66a)
 
@@ -52,6 +50,39 @@ Before you begin, ensure you have the following installed:
 - PostgreSQL (v14 or higher) - _Not needed if using Docker_
 - Git
 - Docker and Docker Compose (optional)
+
+## 📦 Quick Setup
+
+1. Clone and navigate:
+
+```bash
+git clone https://github.com/ahmedabougabal/FullStackBlogApp.git
+cd FullStackBlogApp
+```
+
+2. Create backend `.env`:
+
+```env
+DATABASE_HOST=postgres
+DATABASE_PORT=5432
+DATABASE_USER=blog_user
+DATABASE_PASSWORD=your_password
+DATABASE_NAME=blog_db
+NODE_ENV=development
+PORT=3000
+```
+
+3. Run with Docker:
+
+```bash
+docker-compose up --build
+```
+
+✨ Access your application:
+
+- 🌐 Frontend: http://localhost:3002
+- 🚀 Backend API: http://localhost:3000
+- 💾 Database: localhost:5432
 
 ## 🚀 Quick Start with Docker
 
