@@ -1,4 +1,4 @@
-# FullStackBlogApp
+# FullStackBlogApp  (please use linux for running the project, easy instructions are included below ) 
 
 A modern, responsive blog platform built with React, TypeScript, and NestJS. Features a beautiful UI, robust error handling, and full CRUD operations for blog posts.
 
@@ -72,7 +72,9 @@ NODE_ENV=development
 PORT=3000
 ```
 
-3. Run with Docker:
+3. run ./setup.sh on your terminal 
+
+4. then execute with Docker:
 
 ```bash
 docker-compose up --build
