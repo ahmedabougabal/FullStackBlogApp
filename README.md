@@ -51,7 +51,7 @@ Before you begin, ensure you have the following installed:
 - Git
 - Docker and Docker Compose (optional)
 
-## 📦 Quick Setup
+## Docker (quick, easy, and recommended)
 
 1. Clone and navigate:
 
@@ -106,7 +106,7 @@ docker-compose up -d
 1. **Clone the repository**
 
 ```bash
-git clone https://github.com/yourusername/FullStackBlogApp.git
+git clone https://github.com/ahmedabougabal/FullStackBlogApp.git
 cd FullStackBlogApp
 ```
 
