@@ -149,9 +149,9 @@ const PostList: React.FC = () => {
   return (
     <div style={styles.container}>
       <header style={styles.header}>
-        <h1 style={styles.title}>Welcome to Our Blog</h1>
+        <h1 style={styles.title}>Welcome to our Space Blog</h1>
         <p style={styles.subtitle}>
-          Discover amazing stories, insights, and ideas from our community
+          Discover amazing stories, insights from different communities
         </p>
       </header>
 
