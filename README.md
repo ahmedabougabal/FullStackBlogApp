@@ -1,4 +1,4 @@
-# FullStackBlogApp  (please use linux for running the project, easy instructions are included below ) 
+# FullStackBlogApp  (please use linux for running this WebApp, easy instructions are included below and are easy to follow ) 
 
 A modern, responsive blog platform built with React, TypeScript, and NestJS. Features a beautiful UI, robust error handling, and full CRUD operations for blog posts.
 
